@@ -9,19 +9,14 @@ var app = express();
 //App Creation
 var app = express();
 
-var MongoClient = require('mongodb').MongoClient
-, assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/rpg_go';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-assert.equal(null, err);
-console.log("Connected correctly to server");
-
-db.close();
-});
-
+//Database vars
+var connection_string = 'mongodb:\/\/rpg_admin:Kitten1@localhost:27017/rpg_go?authSource=admin&authMechanism=MONGODB-CR';
+var db = mongojs(connection_string, ['races','import-classes']);
+if(db){
+  console.log("DB Connected...");
+  var races_col = db.collection('races');
+  var importclasses_col = db.collection('import-classes');
+}
 app.get('/', function (req, res) {
   res.send('Hello World!')
 })
