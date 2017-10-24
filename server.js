@@ -20,6 +20,25 @@ if(db){
 app.get('/', function (req, res) {
   res.send('Hello World!')
 })
+
+self.app.configure(function() {
+  
+             self.app.use(function(req, res, next) {
+                 res.header('Access-Control-Allow-Credentials',true);
+                 res.header('Access-Control-Allow-Origin', '*');
+                 res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+                 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, *');
+
+
+                 if ('OPTIONS' === req.method) {
+                  res.send(200);
+              }
+              else {
+                  next();
+              };
+          });
+      });
+
 app.get('/dbquery', function (req, res) {
   console.log("QUERY CONTENT",req.query);
   importclasses_col.find({name: req.query.pc_class}).toArray(function(err,races){
