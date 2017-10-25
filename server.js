@@ -5,6 +5,7 @@ var mongojs = require('mongojs');
 var passport = require('passport')
 var util = require('util');
 var app = express();
+var cors = require('cors')
 
 //App Creation
 var app = express();
@@ -16,14 +17,18 @@ if(db){
   console.log("DB Connected...");
   var races_col = db.collection('races');
   var importclasses_col = db.collection('import-classes');
+  var players_col = db.collection('players');  
 }
 app.get('/', function (req, res) {
   res.send('Hello World!')
 })
 
-self.app.configure(function() {
+app.use(cors())
+
+/*
+app.configure(function() {
   
-             self.app.use(function(req, res, next) {
+             app.use(function(req, res, next) {
                  res.header('Access-Control-Allow-Credentials',true);
                  res.header('Access-Control-Allow-Origin', '*');
                  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -55,7 +60,46 @@ app.get('/dbquery', function (req, res) {
       }
   });
 })
+*/
 
+app.get('/players', function (req, res) {
+    //res.header('Access-Control-Allow-Credentials',true);
+    //res.header('Access-Control-Allow-Origin', '*');
+    //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, *');
+    console.log("QUERY CONTENT",req.query);
+    var p = req.query;
+    players_col.find({player_name:p.player_name}).toArray(function(err,players){
+        if (err || !players) {
+            console.log("err",err);
+            res.send("ERROR ON DB CALL");
+        }else{
+            if(players.length == 0){
+                //player does not exist, create them, then send their JSON back
+                var userobject = {
+                    player_name:p.player_name,
+                    pwd:p.player_pwd
+                }
+                players_col.insert(userobject, function(err){
+                    if(err){
+                        console.log(err);
+                        //return done(null, p);
+                        res.json({result: 'error-on insert'});
+                    }else{
+                        console.log("insert complete");
+                        //return done(null, p);
+                        res.json({result: '1'});
+                    };
+
+                });
+            }else{
+              //player exists, generate and send their JSON back
+              res.json(players[0]);
+            }
+        }
+    });
+  })
+  
 var server = app.listen(3000,function() {
   console.log('Started App on 3000');
 });

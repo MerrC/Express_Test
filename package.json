@@ -31,10 +31,11 @@
     "socket.io": "0.9.x",
     "express": "~3.4.4",	
     "mongojs": "latest",
-	"ejs": ">= 0.0.0",
+	  "ejs": ">= 0.0.0",
     "passport": ">= 0.0.0",
     "passport-google": ">= 0.0.0",
-    "passport-google-oauth": ">= 0.0.0"
+    "passport-google-oauth": ">= 0.0.0",
+    "cors": "latest"
   },
   "devDependencies": {},
   "bundleDependencies": [],
