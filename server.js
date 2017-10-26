@@ -24,7 +24,13 @@ app.get('/', function (req, res) {
 })
 
 app.use(cors())
-
+//Homebrew cors solution
+function doCors(res){
+    res.header('Access-Control-Allow-Credentials',true);
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, *');
+}
 /*
 app.configure(function() {
   
@@ -61,12 +67,44 @@ app.get('/dbquery', function (req, res) {
   });
 })
 */
+app.get('/test1', function (req, res) {
+    doCors(res);
+    res.json({result: 'GOOD CORS'});
+});
+app.get('/races', function (req, res) {
+    doCors(res);
+    races_col.find().toArray(function(err,races){
+        if (err || !races) {
+            console.log("err",err);
+            res.send("ERROR ON DB CALL");
+        }else{
+            if(races.length >0){
+                res.json(races);
+            }else{
+              res.json({result: 'error-no races'});
+            }
+        }
+    });
+  })
+  
+  app.get('/classes', function (req, res) {
+    doCors(res);
+    importclasses_col.find().toArray(function(err,classes){
+        if (err || !classes) {
+            console.log("err",err);
+            res.send("ERROR ON DB CALL");
+        }else{
+            if(classes.length >0){
+                res.json(classes);
+            }else{
+              res.json({result: 'error-no classes'});
+            }
+        }
+    });
+  })
 
 app.get('/players', function (req, res) {
-    //res.header('Access-Control-Allow-Credentials',true);
-    //res.header('Access-Control-Allow-Origin', '*');
-    //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, *');
+    doCors(res);
     console.log("QUERY CONTENT",req.query);
     var p = req.query;
     players_col.find({player_name:p.player_name}).toArray(function(err,players){
